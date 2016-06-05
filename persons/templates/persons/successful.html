@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}Log In{% endblock %}
+
+{% block content %}
+    <div class="create">
+    <h1>La información ha sido insertada exitosamente!</h1>
+    <a href="{% url 'persons:create' %}">Regresar</a>
+    {% if user.is_superuser %}
+        <a href="{% url 'persons:all' %}">Ver lista</a>
+    {% else %}
+        <a href="{% url 'persons:personsuser' pk_user=user.pk %}">Ver lista</a>
+    {% endif %}
+    </div>
+{% endblock %}

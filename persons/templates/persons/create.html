@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Person{% endblock %}
+
+{% block content %}
+    <div class="create">
+        <form method="post" action=""> {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Insertar">
+    </form>
+    </div>
+{% endblock %}

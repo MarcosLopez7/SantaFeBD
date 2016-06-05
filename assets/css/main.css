@@ -1,0 +1,38 @@
+nav ul {
+    text-decoration: none;
+}
+
+.starter-template h1{
+    top: 300px;
+}
+
+#login {
+    position: absolute;
+    top: 200px;
+}
+
+#search {
+    position: absolute;
+    top: 200px;
+}
+
+#persons {
+    position: absolute;
+    top: 200px;
+}
+
+#users {
+    position: absolute;
+    top: 170px;
+}
+
+.create {
+    position: absolute;
+    top: 170px;
+}
+
+@media(min-width: 200px) and (max-width: 800px){
+    #high-screen {
+        display: none;
+    }
+}

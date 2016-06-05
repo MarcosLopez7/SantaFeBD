@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Person{% endblock %}
+
+{% block content %}
+
+    <div id="users">
+        <div class="page-header">
+            <h1>Lista de Usuarios</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th><th>Status</th><th>Activación</th>
+                            <th>Información insertada</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>{{ user }}</td>
+                                {% if user.is_active %}
+                                    <td>Activo</td>
+                                    <td><a href="{% url 'persons:disable' pk=user.pk %}">
+                                        <span class="label label-danger">Desactivar</span>
+                                    </a></td>
+                                {% else %}
+                                    <td>Inactivo</td>
+                                    <td><a href="{% url 'persons:enable' pk=user.pk %}">
+                                        <span class="label label-success">Activar</span>
+                                    </a></td>
+                                {% endif %}
+                                <td>
+                                    <a href="{% url 'persons:personsuser' pk_user=user.pk %}">
+                                        <span class="label label-primary">Personas</span>
+                                    </a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

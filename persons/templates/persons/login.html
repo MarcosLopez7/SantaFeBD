@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}Log In{% endblock %}
+
+{% block content %}
+    <div id="login">
+        {% if message %}
+            <div class="alert alert-danger">
+                <strong>Usuario o contraseña inválidas</strong>
+            </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'persons:login' %}" role="form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Username:</label>
+                <input type="text" class="form-control" name="username">
+            </div>
+            <div class="form-group">
+                <label for="pwd">Contraseña:</label>
+                <input type="password" class="form-control" name="password">
+            </div>
+            <button type="submit" class="btn btn-default">Log In</button>
+        </form>
+    </div>
+{% endblock %}

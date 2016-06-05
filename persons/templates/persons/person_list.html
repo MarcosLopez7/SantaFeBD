@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Person{% endblock %}
+
+{% block content %}
+    <div id="persons">
+        <div class="page-header">
+            <h1>Lista de personas</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th><th>Email</th><th>Teléfono</th>
+                            <th>Edad</th><th>Género</th><th>Editar</th><th>Borrar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for person in persons %}
+                            <tr>
+                                <td>{{ person.name }}</td>
+                                <td>{{ person.email }}</td>
+                                <td>{{ person.phone }}</td>
+                                <td>{{ person.age }}</td>
+                                <td>{{ person.gender }}</td>
+                                <td><a href="{% url 'persons:update' pk=person.pk %}">
+                                    <span class="label label-primary">Editar</span>
+                                </a></td>
+                                <td><a href="{% url 'persons:delete' pk=person.pk %}">
+                                    <span class="label label-danger">Borrar</span>
+                                </a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
