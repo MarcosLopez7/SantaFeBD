@@ -31,8 +31,16 @@ nav ul {
     top: 170px;
 }
 
+
+
 @media(min-width: 200px) and (max-width: 800px){
     #high-screen {
+        display: none;
+    }
+}
+
+@media(min-width: 800px) {
+    header ul {
         display: none;
     }
 }
