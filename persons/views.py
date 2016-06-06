@@ -52,7 +52,7 @@ def person_create(request):
         instance.save()
         if request.user.is_superuser:
             return redirect('/persons/successful')
-        return redirect(persons_list_creator(request, request.user.pk), {'message': 'exitoso'})
+        return redirect(('/persons/personsuser/{0}'.format(request.user.pk)))
 
     context = {
         'form': form,
