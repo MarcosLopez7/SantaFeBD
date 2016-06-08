@@ -4,12 +4,25 @@
 
 {% block content %}
     <div class="create">
-    <h1>La información ha sido insertada exitosamente!</h1>
-    <a href="{% url 'persons:create' %}">Regresar</a>
-    {% if user.is_superuser %}
-        <a href="{% url 'persons:all' %}">Ver lista</a>
-    {% else %}
-        <a href="{% url 'persons:personsuser' pk_user=user.pk %}">Ver lista</a>
-    {% endif %}
+        {% if message == 'created' %}
+            <h1>La información ha sido insertada exitosamente!</h1>
+        {% elif message == 'deleted'%}
+            <h1>La información ha sido eliminada!</h1>
+        {% endif %}
+        <a href="{% url 'persons:create' %}">
+            <span class="label label-primary">Regresar</span>
+        </a>
+        {% if user.is_superuser %}
+            <a href="{% url 'persons:all' %}">
+                <span class="label label-primary">Ver lista completa</span>
+            </a>
+            <a href="{% url 'persons:search' %}">
+                <span class="label label-primary">Buscar</span>
+            </a>
+        {% else %}
+            <a href="{% url 'persons:personsuser' pk_user=user.pk %}">
+                <span class="label label-primary">Ver lista</span>
+            </a>
+        {% endif %}
     </div>
 {% endblock %}

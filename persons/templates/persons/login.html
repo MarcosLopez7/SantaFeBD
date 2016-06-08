@@ -4,9 +4,16 @@
 
 {% block content %}
     <div id="login">
-        {% if message %}
+        <div class="page-header">
+            <h1>Iniciar Sesión</h1>
+        </div>
+        {% if message == 'invalid'%}
             <div class="alert alert-danger">
                 <strong>Usuario o contraseña inválidas</strong>
+            </div>
+        {% elif message == 'inactive'%}
+            <div class="alert alert-danger">
+                <strong>Este usuario ya está inactivo</strong>
             </div>
         {% endif %}
 

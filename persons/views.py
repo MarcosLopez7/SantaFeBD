@@ -9,31 +9,33 @@ from django.views.generic.edit import CreateView
 # Create your views here.
 
 def loginForm(request):
-    if not request.user.is_authenticated:
+    if request.user.is_authenticated():
         return redirect('/')
     return render(request, 'persons/login.html')
 
 def logoutView(request):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         raise Http404
 
     if not request.user.is_superuser:
         user = request.user
         user.is_active = False
         user.save()
-        return redirect('/', {'message': 'desactivado'})
+        logout(request)
+        return redirect('/')
     logout(request)
     return redirect('/')
 
 def persons_list_creator(request, pk_user):
-    if not request.user.is_authenticated and (pk_user != request.user.pk):
+    if not request.user.is_authenticated() or ((int(pk_user) != request.user.pk)\
+            and not request.user.is_superuser):
         raise Http404
 
     persons = Person.objects.filter(userCreator_id=pk_user)
     return render(request, 'persons/person_list.html', {'persons': persons})
 
 def person_list(request):
-    if not request.user.is_authenticated and not request.user.is_superuser:
+    if not request.user.is_authenticated or not request.user.is_superuser:
         raise Http404
 
     persons = Person.objects.all()
@@ -44,27 +46,33 @@ def person_create(request):
     if not request.user.is_authenticated:
         raise Http404
 
-    form = PersonForm(request.POST or None)
+    context = {}
+    if request.method == 'POST':
+        form = PersonForm(request.POST or None)
 
-    if form.is_valid():
-        instance = form.save(commit=False)
-        instance.userCreator = request.user
-        instance.save()
-        if request.user.is_superuser:
-            return redirect('/persons/successful')
-        return redirect(('/persons/personsuser/{0}'.format(request.user.pk)))
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.userCreator = request.user
+            instance.save()
+            if request.user.is_superuser:
+                return redirect('/persons/successful')
+            return redirect(('/persons/personsuser/{0}'.format(request.user.pk)))
+    else:
+        form = PersonForm()
 
-    context = {
-        'form': form,
-        'message': 'invalid'
-    }
+    context['form'] = form
+    context['title'] = 'Insertar'
+
     return render(request, "persons/create.html", context)
 
-def person_update(request, pk=None):
-    if not request.user.is_authenticated:
+def person_update(request, pk):
+    if not request.user.is_authenticated():
         raise Http404
 
     instance = get_object_or_404(Person, pk=pk)
+    if instance.userCreator != request.user and not request.user.is_superuser:
+        raise Http404
+
     form = PersonForm(request.POST or None, instance=instance)
 
     if form.is_valid():
@@ -73,35 +81,39 @@ def person_update(request, pk=None):
         instance.save()
         if request.user.is_superuser:
             return redirect('/persons/successfuledition')
-        return redirect(persons_list_creator(request, request.user.pk), {'message': 'exitoso'})
+        return redirect(('/persons/personsuser/{0}'.format(request.user.pk)))
 
     context = {
         "person": instance,
         "form": form,
-        'message': 'invalid'
+        'title': 'Editar'
     }
 
     return render(request, 'persons/create.html', context)
 
 def person_delete(request, pk=None):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         raise Http404
 
     instance = get_object_or_404(Person, pk=pk)
+
+    if instance.userCreator != request.user and not request.user.is_superuser:
+        raise Http404
+
     instance.delete()
     if request.user.is_superuser:
-        return redirect('/persons/successfuldeletion')
-    return redirect(persons_list_creator(request, request.user.pk), {'message': 'borrado'})
+        return redirect('/persons/successfuldeletion/')
+    return redirect(('/persons/personsuser/{0}'.format(request.user.pk)))
 
 def users_list(request):
-    if not request.user.is_authenticated and not request.user.is_superuser:
+    if not request.user.is_authenticated() or not request.user.is_superuser:
         raise Http404
 
     users = User.objects.all()
     return render(request, 'persons/users_list.html', {'users': users})
 
 def disable_user(request, pk):
-    if not request.user.is_authenticated and not request.user.is_superuser:
+    if not request.user.is_authenticated() or not request.user.is_superuser:
         raise Http404
 
     user = User.objects.get(pk=pk)
@@ -110,7 +122,7 @@ def disable_user(request, pk):
     return redirect('/persons/users')
 
 def enable_user(request, pk):
-    if not request.user.is_authenticated and not request.user.is_superuser:
+    if not request.user.is_authenticated or not request.user.is_superuser:
         raise Http404
 
     user = User.objects.get(pk=pk)
@@ -119,14 +131,14 @@ def enable_user(request, pk):
     return redirect('/persons/users')
 
 def search(request):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         raise Http404
     if not request.user.is_superuser:
         return redirect('/persons/personsuser/{0}'.format(request.user.pk))
     return render(request, 'persons/search.html')
 
 def results(request):
-    if not request.user.is_authenticated and not request.user.is_superuser:
+    if not request.user.is_authenticated() or not request.user.is_superuser:
         raise Http404
 
     name = request.GET['name']
@@ -137,9 +149,9 @@ def results(request):
     return render(request, 'persons/person_list.html', {'persons': persons})
 
 def successful(request):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         raise Http404
-    return render(request, 'persons/successful.html', {'message': 'person'})
+    return render(request, 'persons/successful.html', {'message': 'created'})
 
 def successful_edition(request):
     if not request.user.is_authenticated:
@@ -152,7 +164,7 @@ def successful_deletion(request):
     return render(request, 'persons/successful.html', {'message': 'deleted'})
 
 def successful_user(request):
-    if not request.user.is_authenticated and not request.user.is_superuser:
+    if not request.user.is_authenticated() or not request.user.is_superuser:
         raise Http404
     return render(request, 'persons/successful.html', {'message': 'user'})
 
@@ -171,7 +183,7 @@ class UserLoginView(View):
                 login(request, user)
                 return redirect('/')
             else:
-                return redirect('/')
+                return render(request, 'persons/login.html', {'message': 'inactive'})
         return render(request, 'persons/login.html', {'message': 'invalid'})
 
 
@@ -181,13 +193,13 @@ class UserCreateView(View):
     template_name = 'persons/create_user.html'
 
     def get(self, request):
-        if not request.user.is_authenticated and not request.user.is_superuser:
+        if not request.user.is_authenticated() or not request.user.is_superuser:
             raise Http404
         form = self.form_class(None)
         return render(request, self.template_name, {'form': form})
 
     def post(self, request):
-        if not request.user.is_authenticated and not request.user.is_superuser:
+        if not request.user.is_authenticated() or not request.user.is_superuser:
             raise Http404
         form = self.form_class(request.POST)
 

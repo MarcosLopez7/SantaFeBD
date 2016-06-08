@@ -52,7 +52,7 @@ MIDDLEWARE_CLASSES = [
     'persons.middleware.AutoLogout',
 ]
 
-AUTO_LOGOUT_DELAY = 1 #equivalent to 5 minutes
+AUTO_LOGOUT_DELAY = 5 #equivalent to 5 minutes
 
 ROOT_URLCONF = 'SantaFeBD.urls'
 

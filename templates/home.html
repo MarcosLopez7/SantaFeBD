@@ -4,6 +4,13 @@
 
 {% block content %}
     <div class="jumbotron">
-        <h1>Sitio de base de datos santa Fe</h1>
+        {% if user.is_authenticated %}
+            <h1>Bienvenido {{ user }}</h1>
+        {% else %}
+            <h1>
+                Este sitio es privado, si usted no es del personal autorizado para usar este sitio,
+                le pedimos que se retire
+            </h1>
+        {% endif %}
     </div>
 {% endblock %}

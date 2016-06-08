@@ -4,6 +4,9 @@
 
 {% block content %}
     <div id="search">
+        <div class="page-header">
+            <h1>Busqueda</h1>
+        </div>
         <form method="get" action="{% url 'persons:results' %}" role="form">
             <div class="form-group">
                 <label>Nombre</label>
